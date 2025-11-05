@@ -1,0 +1,1388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sam Removals — Step 1: Inventory</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap');
+
+        :root {
+            --accent: #2563eb;
+            --accent-dark: #1d4ed8;
+            --accent-light: #e5efff;
+            --ink: #161629;
+            --ink-secondary: #3c3c52;
+            --ink-muted: #6c6c80;
+            --line: #e5e6f4;
+            --surface: #ffffff;
+            --surface-muted: #f6f7fb;
+            --shadow-sm: 0 12px 24px rgba(22, 22, 41, 0.08);
+            --shadow-lg: 0 24px 48px rgba(22, 22, 41, 0.12);
+            --radius-lg: 24px;
+            --radius-md: 16px;
+            --radius-sm: 12px;
+            --transition: all 0.25s ease;
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            color: var(--ink);
+            background: var(--surface-muted);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .app-shell {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .top-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 24px clamp(20px, 6vw, 72px);
+            background: var(--surface);
+            box-shadow: var(--shadow-sm);
+            position: sticky;
+            top: 0;
+            z-index: 20;
+        }
+
+        .brand-name {
+            font-weight: 800;
+            font-size: 1.6rem;
+            letter-spacing: -0.015em;
+            color: var(--ink);
+        }
+
+        .top-actions {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            font-size: 0.95rem;
+            color: var(--ink-secondary);
+        }
+
+        .link-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 18px;
+            border-radius: 99px;
+            background: var(--surface-muted);
+            border: 1px solid transparent;
+            transition: var(--transition);
+            font-weight: 600;
+        }
+
+        .link-button:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .hotline {
+            font-weight: 600;
+        }
+
+        .progress-tracker {
+            background: var(--surface);
+            margin: 0 clamp(20px, 6vw, 72px);
+            margin-top: 20px;
+            padding: 18px clamp(20px, 4vw, 40px);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .progress-steps {
+            list-style: none;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: clamp(12px, 2vw, 24px);
+            padding: 0;
+            margin: 0;
+            position: relative;
+        }
+
+        .progress-steps::before {
+            content: '';
+            position: absolute;
+            top: 22px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--line);
+            z-index: 0;
+        }
+
+        .progress-step {
+            position: relative;
+            z-index: 1;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            align-items: center;
+            text-align: center;
+        }
+
+        .step-circle {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 2px solid var(--accent-light);
+            background: var(--surface);
+            color: var(--accent);
+            font-weight: 700;
+            font-size: 0.9rem;
+            transition: var(--transition);
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.08);
+        }
+
+        .progress-step.completed .step-circle {
+            background: var(--accent);
+            color: #fff;
+            border-color: transparent;
+            box-shadow: 0 0 0 6px rgba(37, 99, 235, 0.15);
+        }
+
+        .progress-step.current .step-circle {
+            background: var(--accent);
+            color: #fff;
+            border-color: transparent;
+            box-shadow: 0 0 0 6px rgba(37, 99, 235, 0.12);
+        }
+
+        .progress-step.completed::after {
+            content: '';
+            position: absolute;
+            top: 23px;
+            left: calc(50% + 16px);
+            width: calc(100% - 32px);
+            height: 3px;
+            background: linear-gradient(90deg, rgba(37,99,235,0.35), rgba(37,99,235,0.12));
+            z-index: -1;
+        }
+
+        .progress-step:last-child::after {
+            display: none;
+        }
+
+        .progress-step.clickable .step-index,
+        .progress-step.clickable .step-label,
+        .progress-step.clickable .step-sub {
+            cursor: pointer;
+        }
+
+        .progress-step.clickable .step-index:hover {
+            box-shadow: 0 0 0 6px rgba(37, 99, 235, 0.2);
+        }
+
+        .step-label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--ink-secondary);
+        }
+
+        .step-sub {
+            font-size: 0.75rem;
+            color: var(--ink-muted);
+        }
+
+        .page-content {
+            flex: 1;
+            padding: clamp(24px, 6vw, 72px);
+            padding-top: 32px;
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+        }
+
+        .hero {
+            text-align: center;
+            background: var(--surface);
+            padding: clamp(32px, 6vw, 64px);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .eyebrow {
+            text-transform: uppercase;
+            letter-spacing: 0.16em;
+            font-weight: 600;
+            font-size: 0.75rem;
+            color: var(--ink-muted);
+            margin-bottom: 12px;
+        }
+
+        .hero h1 {
+            font-size: clamp(2rem, 5vw, 2.75rem);
+            margin: 0 0 16px;
+            letter-spacing: -0.02em;
+        }
+
+        .hero p {
+            margin: 0 auto;
+            max-width: 560px;
+            color: var(--ink-secondary);
+            font-size: 1rem;
+        }
+
+        .choice-grid {
+            margin-top: clamp(24px, 4vw, 40px);
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: clamp(16px, 3vw, 32px);
+        }
+
+        .choice-card {
+            border-radius: var(--radius-md);
+            border: 2px solid transparent;
+            padding: clamp(20px, 4vw, 28px);
+            background: var(--surface);
+            box-shadow: var(--shadow-sm);
+            text-align: left;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .choice-card.active {
+            border-color: var(--accent);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .choice-card[aria-pressed="false"]:hover {
+            border-color: var(--accent-light);
+        }
+
+        .choice-chip {
+            align-self: flex-start;
+            padding: 6px 14px;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            background: var(--accent-light);
+            color: var(--accent);
+            letter-spacing: 0.08em;
+        }
+
+        .choice-card h2 {
+            margin: 0;
+            font-size: 1.35rem;
+            font-weight: 700;
+        }
+
+        .choice-card p {
+            color: var(--ink-secondary);
+            margin: 0;
+            line-height: 1.5;
+        }
+
+        .choice-meta {
+            margin-top: auto;
+            font-size: 0.85rem;
+            color: var(--ink-muted);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .choice-action {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            color: var(--accent);
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1.8fr) minmax(280px, 1fr);
+            gap: clamp(24px, 5vw, 40px);
+        }
+
+        #inventoryPanel,
+        #volumePanel {
+            display: none;
+        }
+
+        body.inventory-mode #inventoryPanel {
+            display: flex;
+        }
+
+        body.volume-mode #volumePanel {
+            display: flex;
+        }
+
+        body.volume-mode #inventoryPanel,
+        body.mode-unset #inventoryPanel,
+        body.mode-unset #volumePanel {
+            display: none;
+        }
+
+        .inventory-panel {
+            background: var(--surface);
+            padding: clamp(28px, 5vw, 40px);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .inventory-header {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .inventory-header h3 {
+            margin: 0;
+            font-size: 1.5rem;
+        }
+
+        .search-wrap {
+            position: relative;
+        }
+
+        .search-wrap input {
+            width: 100%;
+            padding: 16px 20px 16px 52px;
+            border-radius: 14px;
+            border: 1px solid var(--line);
+            background: var(--surface-muted);
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .search-wrap input:focus {
+            outline: none;
+            border-color: var(--accent);
+            background: var(--surface);
+            box-shadow: 0 0 0 3px rgba(255, 27, 122, 0.12);
+        }
+
+        .search-icon {
+            position: absolute;
+            top: 50%;
+            left: 20px;
+            transform: translateY(-50%);
+            color: var(--accent);
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        .category-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .tab-button {
+            padding: 10px 18px;
+            border-radius: 999px;
+            border: 1px solid var(--line);
+            background: var(--surface);
+            color: var(--ink-secondary);
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .tab-button:hover,
+        .tab-button:focus-visible {
+            border-color: var(--accent);
+            color: var(--accent);
+            outline: none;
+        }
+
+        .tab-button.active {
+            background: var(--accent);
+            color: var(--surface);
+            border-color: var(--accent);
+        }
+
+        .items-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 20px;
+        }
+
+        .volume-panel {
+            display: none;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .volume-card {
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            padding: clamp(28px, 5vw, 40px);
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .volume-card-header {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            align-items: flex-start;
+        }
+
+        .volume-subtitle {
+            margin: 8px 0 0;
+            color: var(--ink-muted);
+            font-size: 0.95rem;
+        }
+
+        .mode-toggle-link {
+            border: none;
+            background: none;
+            color: var(--accent);
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.95rem;
+            padding: 6px 0;
+        }
+
+        .volume-input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .volume-label {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: var(--ink-secondary);
+        }
+
+        .volume-input-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            background: var(--surface-muted);
+            padding: 10px 14px;
+        }
+
+        .volume-input-control input {
+            border: none;
+            background: transparent;
+            font-size: 1.4rem;
+            font-weight: 700;
+            width: 120px;
+        }
+
+        .volume-input-control input:focus {
+            outline: none;
+        }
+
+        .volume-unit {
+            font-weight: 600;
+            color: var(--accent);
+        }
+
+        .volume-helper {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: var(--ink-muted);
+        }
+
+        .volume-reserve {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--ink-secondary);
+        }
+
+        .volume-faq {
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            padding: clamp(24px, 4vw, 32px);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .volume-faq h4 {
+            margin: 0;
+            font-size: 1.2rem;
+        }
+
+        .volume-faq details {
+            border-top: 1px solid var(--line);
+            padding-top: 12px;
+        }
+
+        .volume-faq summary {
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--ink-secondary);
+        }
+
+        .volume-faq summary::-webkit-details-marker {
+            display: none;
+        }
+
+        .volume-faq summary::after {
+            content: '▼';
+            float: right;
+            font-size: 0.8rem;
+            transform: rotate(0deg);
+            transition: transform 0.2s ease;
+        }
+
+        .volume-faq details[open] summary::after {
+            transform: rotate(180deg);
+        }
+
+        .volume-faq p {
+            margin: 8px 0 0;
+            color: var(--ink-muted);
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .preset-trigger {
+            display: none;
+            justify-content: flex-end;
+        }
+
+        body.inventory-mode .preset-trigger {
+            display: flex;
+        }
+
+        .preset-button {
+            border: 1px solid var(--accent-light);
+            background: var(--surface);
+            color: var(--accent);
+            font-weight: 700;
+            padding: 10px 18px;
+            border-radius: 999px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .preset-button:hover {
+            border-color: var(--accent);
+            background: rgba(37, 99, 235, 0.08);
+        }
+
+        .preset-button:disabled {
+            opacity: 0.4;
+            pointer-events: none;
+        }
+
+        .preset-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(22, 22, 41, 0.3);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 110;
+            padding: 20px;
+        }
+
+        .preset-modal.open {
+            display: flex;
+        }
+
+        .preset-modal__card {
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            width: min(420px, 100%);
+            padding: clamp(24px, 5vw, 36px);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .preset-modal__header h3 {
+            margin: 0;
+            font-size: 1.35rem;
+        }
+
+        .preset-modal__header p {
+            margin: 6px 0 0;
+            color: var(--ink-muted);
+            font-size: 0.9rem;
+        }
+
+        .preset-modal__body {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .preset-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            padding: 14px 16px;
+            border-radius: var(--radius-md);
+            background: var(--surface-muted);
+        }
+
+        .preset-row-title {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .preset-row-tip {
+            font-size: 0.75rem;
+            color: var(--ink-muted);
+            margin-top: 4px;
+        }
+
+        .preset-row-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .preset-minus,
+        .preset-plus {
+            width: 32px;
+            height: 32px;
+            border-radius: 10px;
+            border: 1px solid var(--accent-light);
+            background: var(--surface);
+            color: var(--accent);
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .preset-minus:hover,
+        .preset-plus:hover {
+            border-color: var(--accent);
+            background: rgba(37, 99, 235, 0.08);
+        }
+
+        .preset-count {
+            min-width: 28px;
+            text-align: center;
+            font-weight: 700;
+            color: var(--ink-secondary);
+        }
+
+        .preset-modal__actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+
+        .preset-secondary,
+        .preset-primary {
+            padding: 10px 18px;
+            border-radius: 999px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: var(--transition);
+        }
+
+        .preset-secondary {
+            background: var(--surface-muted);
+            color: var(--ink-secondary);
+        }
+
+        .preset-secondary:hover {
+            background: rgba(22, 22, 41, 0.08);
+        }
+
+        .preset-primary {
+            background: var(--accent);
+            color: var(--surface);
+        }
+
+        .preset-primary:hover {
+            background: var(--accent-dark);
+        }
+
+        .item-card {
+            background: var(--surface-muted);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            border: 1px solid transparent;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            transition: var(--transition);
+        }
+
+        body.volume-mode #inventoryPanel {
+            display: none;
+        }
+
+        body.volume-mode #volumePanel {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        body.volume-mode #choiceVolume {
+            border-color: var(--accent);
+            box-shadow: var(--shadow-lg);
+        }
+
+        body.volume-mode #choiceInventory {
+            box-shadow: var(--shadow-sm);
+            border-color: transparent;
+        }
+
+        .item-card:hover {
+            border-color: var(--accent-light);
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .item-card.selected {
+            border-color: var(--accent);
+            background: var(--surface);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .item-header {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .item-name {
+            font-weight: 700;
+            font-size: 1.05rem;
+        }
+
+        .item-badge {
+            padding: 4px 10px;
+            border-radius: 999px;
+            background: rgba(37, 99, 235, 0.12);
+            color: var(--accent);
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .item-details {
+            color: var(--ink-muted);
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        .item-volume {
+            color: var(--accent);
+            font-weight: 700;
+        }
+
+        .item-controls {
+            margin-top: auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            border-top: 1px solid var(--line);
+            padding-top: 16px;
+        }
+
+        .quantity-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .qty-button {
+            width: 36px;
+            height: 36px;
+            border-radius: 12px;
+            border: 1px solid var(--accent);
+            background: var(--surface);
+            color: var(--accent);
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .qty-button:hover {
+            background: var(--accent);
+            color: var(--surface);
+        }
+
+        .qty-display {
+            min-width: 28px;
+            text-align: center;
+            font-weight: 700;
+            color: var(--ink-secondary);
+        }
+
+        .add-item-btn {
+            flex: 1;
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: none;
+            background: var(--accent);
+            color: var(--surface);
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .add-item-btn:hover {
+            background: var(--accent-dark);
+        }
+
+        .summary-panel {
+            position: sticky;
+            top: 120px;
+            align-self: start;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .summary-card {
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            padding: clamp(24px, 4vw, 32px);
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .summary-header h3 {
+            margin: 0;
+            font-size: 1.35rem;
+        }
+
+        .summary-metrics {
+            display: grid;
+            gap: 16px;
+        }
+
+        .summary-metric {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 16px;
+            border-radius: var(--radius-md);
+            background: var(--surface-muted);
+        }
+
+        .metric-label {
+            font-size: 0.85rem;
+            color: var(--ink-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .metric-value {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--ink-secondary);
+        }
+
+        .metric-value.highlight {
+            color: var(--accent);
+        }
+
+        .selected-items-list {
+            max-height: 340px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .selected-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 12px 14px;
+            border-radius: var(--radius-md);
+            background: var(--surface-muted);
+        }
+
+        .selected-item-name {
+            font-weight: 600;
+            color: var(--ink-secondary);
+        }
+
+        .selected-item-qty {
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .remove-btn {
+            border: none;
+            background: none;
+            color: var(--ink-muted);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .remove-btn:hover {
+            color: var(--accent);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 48px 16px;
+            color: var(--ink-muted);
+            background: var(--surface-muted);
+            border-radius: var(--radius-md);
+        }
+
+        .empty-state-icon {
+            font-size: 2.5rem;
+            margin-bottom: 12px;
+        }
+
+        .journey-footer {
+            position: sticky;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(18px);
+            border-top: 1px solid rgba(229, 230, 244, 0.9);
+            padding: clamp(16px, 3vw, 24px) clamp(20px, 6vw, 72px);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+
+        .footer-stats {
+            display: flex;
+            align-items: center;
+            gap: clamp(16px, 3vw, 32px);
+            flex-wrap: wrap;
+        }
+
+        .footer-pill {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 18px;
+            border-radius: 999px;
+            background: var(--surface-muted);
+            font-weight: 600;
+        }
+
+        .footer-pill span {
+            color: var(--accent);
+        }
+
+        .primary-action {
+            padding: 16px 32px;
+            border-radius: 999px;
+            border: none;
+            background: var(--accent);
+            color: var(--surface);
+            font-weight: 700;
+            font-size: 1rem;
+            letter-spacing: 0.02em;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .primary-action:hover:not(:disabled) {
+            background: var(--accent-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .primary-action:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        @media (max-width: 1080px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .choice-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .summary-panel {
+                position: relative;
+                top: auto;
+            }
+        }
+
+        @media (max-width: 900px) {
+            .content-grid {
+                gap: 32px;
+            }
+
+            .items-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            }
+
+            .journey-footer {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .footer-stats {
+                width: 100%;
+            }
+
+            .primary-action {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 720px) {
+            .top-bar {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 16px;
+            }
+
+            .progress-steps {
+                flex-wrap: wrap;
+                justify-content: center;
+                position: relative;
+            }
+
+            .progress-step {
+                flex: 0 1 160px;
+                margin-bottom: 12px;
+            }
+
+            .progress-steps::before,
+            .progress-step::after {
+                display: none !important;
+            }
+
+            .hero {
+                text-align: left;
+            }
+
+            .items-grid {
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            }
+
+            .choice-card {
+                padding: 20px;
+            }
+
+            .journey-footer {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .primary-action {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-shell">
+        <header class="top-bar">
+            <span class="brand-name">Sam Removals</span>
+            <div class="top-actions">
+                <a class="link-button" href="index.html">← Back to site</a>
+                <span class="hotline">Need help? 1800 835 275</span>
+            </div>
+        </header>
+
+        <section class="progress-tracker" aria-label="Quote progress">
+            <ol class="progress-steps">
+                <li class="progress-step current" data-target="quote-calculator.html">
+                    <span class="step-index">1</span>
+                    <span class="step-label">Inventory</span>
+                    <span class="step-sub">Build your move</span>
+                </li>
+                <li class="progress-step" data-target="quote-locations.html">
+                    <span class="step-index">2</span>
+                    <span class="step-label">Locations</span>
+                    <span class="step-sub">Pick up & drop off</span>
+                </li>
+                <li class="progress-step" data-target="quote-locations.html">
+                    <span class="step-index">3</span>
+                    <span class="step-label">Schedule</span>
+                    <span class="step-sub">Date & timing</span>
+                </li>
+                <li class="progress-step" data-target="quote-friction.html">
+                    <span class="step-index">4</span>
+                    <span class="step-label">Access</span>
+                    <span class="step-sub">Stairs & parking</span>
+                </li>
+                <li class="progress-step" data-target="quote-final.html">
+                    <span class="step-index">5</span>
+                    <span class="step-label">Quote</span>
+                    <span class="step-sub">Review & confirm</span>
+                </li>
+            </ol>
+        </section>
+
+        <main class="page-content">
+            <section class="hero">
+                <p class="eyebrow">Step 1 · Inventory</p>
+                <h1>How much are we moving?</h1>
+                <p>Select the option that matches your move. You can switch methods at any time.</p>
+
+                <div class="choice-grid" role="group" aria-label="Inventory input methods">
+                    <button type="button" class="choice-card" aria-pressed="false" id="choiceInventory" data-mode="inventory">
+                        <span class="choice-chip">Most popular</span>
+                        <h2>List your items</h2>
+                        <p>Add furniture, appliances, and boxes for the most accurate quote.</p>
+                        <div class="choice-meta">
+                            <span class="choice-action">Open inventory →</span>
+                            <span id="choiceItemsMeta">Choose a method to get started</span>
+                        </div>
+                    </button>
+
+                    <button type="button" class="choice-card" aria-pressed="false" id="choiceVolume" data-mode="volume">
+                        <h2>I know my moving volume</h2>
+                        <p>Already measured your cubic metres? Enter it directly for a quick quote.</p>
+                        <div class="choice-meta">
+                            <span class="choice-action">Swap to volume →</span>
+                            <span id="choiceVolumeMeta">Enter volume</span>
+                        </div>
+                    </button>
+                </div>
+            </section>
+
+            <div class="content-grid">
+                <section class="inventory-panel" aria-labelledby="inventoryHeading" id="inventoryPanel">
+                    <div class="inventory-header">
+                        <h3 id="inventoryHeading" tabindex="-1">List your inventory</h3>
+                        <p style="color: var(--ink-muted); margin: 0;">
+                            Search by name or browse categories. Add quantities and we’ll calculate the volume for you.
+                        </p>
+                    </div>
+
+                    <div class="preset-trigger">
+                        <button type="button" class="preset-button" id="openPresetModal">
+                            + Add common rooms
+                        </button>
+                    </div>
+
+                    <div class="search-wrap">
+                        <span class="search-icon">⌕</span>
+                        <input
+                            type="search"
+                            id="searchBox"
+                            class="search-box"
+                            placeholder="Search items (e.g. sofa, queen bed, fridge)…"
+                            aria-label="Search inventory"
+                        >
+                    </div>
+
+                    <div class="category-tabs" role="tablist" aria-label="Inventory categories">
+                        <button class="tab-button" data-category="all">All items</button>
+                        <button class="tab-button" data-category="FURNITURE">Furniture</button>
+                        <button class="tab-button" data-category="APPLIANCES">Appliances</button>
+                        <button class="tab-button" data-category="BOXES">Boxes</button>
+                        <button class="tab-button" data-category="SPECIALTY">Specialty</button>
+                    </div>
+
+                    <div class="items-grid" id="itemsGrid" role="region" aria-live="polite">
+                        <!-- Items populated by script -->
+                    </div>
+                </section>
+
+                <section class="volume-panel" id="volumePanel" aria-labelledby="volumeHeading">
+                    <div class="volume-card">
+                        <div class="volume-card-header">
+                            <div>
+                                <h3 id="volumeHeading" tabindex="-1">Enter your moving volume</h3>
+                                <p class="volume-subtitle">Know how many cubic metres you’re moving? Enter it below and we’ll reserve the truck space.</p>
+                            </div>
+                            <button type="button" class="mode-toggle-link" id="backToInventory">← Change estimation method</button>
+                        </div>
+
+                        <div class="volume-input-group">
+                            <label for="volumeNumber" class="volume-label">Estimated volume to move</label>
+                            <div class="volume-input-control">
+                                <input type="number" id="volumeNumber" min="1" max="80" step="0.5" placeholder="e.g. 20">
+                                <span class="volume-unit">m³</span>
+                            </div>
+                            <input type="range" id="volumeRange" min="1" max="80" step="0.5" value="20">
+                            <div class="volume-helper">
+                                <span>1 m³</span>
+                                <span>Up to 80 m³</span>
+                            </div>
+                        </div>
+
+                        <div class="volume-reserve">
+                            Volume we will reserve: <strong id="volumeReserve">—</strong>
+                        </div>
+                    </div>
+
+                    <div class="volume-faq">
+                        <h4>Frequently Asked Questions</h4>
+                        <details>
+                            <summary>Why do we reserve extra space?</summary>
+                            <p>We keep a small buffer so last-minute items or larger-than-expected pieces still fit on the truck. You only pay for what we actually move.</p>
+                        </details>
+                        <details>
+                            <summary>What if I’m unsure of the exact volume?</summary>
+                            <p>Pick your best estimate. Our team double-checks on the day and lets you know if we need to adjust the plan.</p>
+                        </details>
+                        <details>
+                            <summary>Can I switch back to listing items?</summary>
+                            <p>Absolutely. Use the “Change estimation method” link above to return to inventory mode at any time.</p>
+                        </details>
+                    </div>
+                </section>
+
+                <aside class="summary-panel">
+                    <div class="summary-card">
+                        <div class="summary-header">
+                            <h3>Quote vitals</h3>
+                            <p style="margin: 6px 0 0; color: var(--ink-muted); font-size: 0.95rem;">
+                                We’ll keep these details pinned to every step of your quote.
+                            </p>
+                        </div>
+
+                        <div class="summary-metrics">
+                            <div class="summary-metric">
+                                <div>
+                                    <div class="metric-label">Total items</div>
+                                    <div class="metric-value" id="totalItems">—</div>
+                                </div>
+                            </div>
+                            <div class="summary-metric">
+                                <div>
+                                    <div class="metric-label">Total volume</div>
+                                    <div class="metric-value highlight" id="totalVolume">—</div>
+                                </div>
+                            </div>
+                            <div class="summary-metric">
+                                <div>
+                                    <div class="metric-label">Handling time</div>
+                                    <div class="metric-value" id="estTime">—</div>
+                                </div>
+                            </div>
+                            <div class="summary-metric">
+                                <div>
+                                    <div class="metric-label">Recommended crew</div>
+                                    <div class="metric-value" id="crewSize">—</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="summary-card">
+                        <div class="summary-header">
+                            <h3>Selected items</h3>
+                        </div>
+                        <div class="selected-items-list" id="selectedItemsList">
+                            <div class="empty-state">
+                                <div class="empty-state-icon">📦</div>
+                                <p>No items added yet. Start building your move.</p>
+                            </div>
+                        </div>
+                    </div>
+                </aside>
+            </div>
+        </main>
+
+        <div class="preset-modal" id="presetModal" aria-hidden="true">
+            <div class="preset-modal__card" role="dialog" aria-modal="true" aria-labelledby="presetModalTitle">
+                <div class="preset-modal__header">
+                    <h3 id="presetModalTitle">Let’s start with common items</h3>
+                    <p>Choose how many rooms you have. We’ll add typical furniture so you can fine-tune faster.</p>
+                </div>
+                <div class="preset-modal__body">
+                    <div class="preset-row" data-preset="bedrooms">
+                        <div>
+                            <div class="preset-row-title">Bedrooms</div>
+                            <div class="preset-row-tip">Queen bed, 2 bedsides, drawers</div>
+                        </div>
+                        <div class="preset-row-controls">
+                            <button type="button" class="preset-minus">−</button>
+                            <span class="preset-count" data-preset-count="bedrooms">0</span>
+                            <button type="button" class="preset-plus">+</button>
+                        </div>
+                    </div>
+                    <div class="preset-row" data-preset="living">
+                        <div>
+                            <div class="preset-row-title">Living / Family Rooms</div>
+                            <div class="preset-row-tip">3-seater sofa, coffee table, TV unit</div>
+                        </div>
+                        <div class="preset-row-controls">
+                            <button type="button" class="preset-minus">−</button>
+                            <span class="preset-count" data-preset-count="living">0</span>
+                            <button type="button" class="preset-plus">+</button>
+                        </div>
+                    </div>
+                    <div class="preset-row" data-preset="study">
+                        <div>
+                            <div class="preset-row-title">Study / Office</div>
+                            <div class="preset-row-tip">Desk, office chair, bookshelf</div>
+                        </div>
+                        <div class="preset-row-controls">
+                            <button type="button" class="preset-minus">−</button>
+                            <span class="preset-count" data-preset-count="study">0</span>
+                            <button type="button" class="preset-plus">+</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="preset-modal__actions">
+                    <button type="button" class="preset-secondary" id="presetCancel">No thanks</button>
+                    <button type="button" class="preset-primary" id="presetApply">Add items</button>
+                </div>
+            </div>
+        </div>
+
+        <footer class="journey-footer" aria-live="polite">
+            <div class="footer-stats">
+                <div class="footer-pill">
+                    📦 Items <span id="footerItems">—</span>
+                </div>
+                <div class="footer-pill">
+                    📏 Volume <span id="footerVolume">—</span>
+                </div>
+                <div class="footer-pill">
+                    👥 Crew <span id="footerCrew">—</span>
+                </div>
+            </div>
+            <button class="primary-action" id="continueBtn" disabled>Continue to locations</button>
+        </footer>
+    </div>
+
+    <script src="inventory-data.js"></script>
+    <script src="quote-calculator.js"></script>
+</body>
+</html>

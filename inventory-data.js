@@ -1,0 +1,585 @@
+// Sam Removals - Inventory Items Database
+// Converted from SQL catalog for frontend use
+
+const INVENTORY_CATALOG = [
+    // LIVING ROOM FURNITURE
+    {
+        id: 1,
+        itemCode: 'SOFA_1SEAT',
+        category: 'FURNITURE',
+        name: 'Single Seat Sofa/Armchair',
+        description: 'Standard armchair or single seater',
+        volumeM3: 0.65,
+        dimensions: { length: 90, width: 90, height: 80 },
+        weightKg: 30,
+        isHeavy: false,
+        isFragile: false,
+        isSpecialty: false,
+        timeMultiplier: 1.0,
+        surcharge: 0
+    },
+    {
+        id: 2,
+        itemCode: 'SOFA_2SEAT',
+        category: 'FURNITURE',
+        name: '2-Seater Sofa/Loveseat',
+        description: 'Two-seater lounge',
+        volumeM3: 1.30,
+        dimensions: { length: 150, width: 90, height: 80 },
+        weightKg: 50,
+        isHeavy: true,
+        isFragile: false,
+        isSpecialty: false,
+        timeMultiplier: 1.1,
+        surcharge: 0
+    },
+    {
+        id: 3,
+        itemCode: 'SOFA_3SEAT',
+        category: 'FURNITURE',
+        name: '3-Seater Sofa',
+        description: 'Standard three-seater lounge',
+        volumeM3: 1.95,
+        dimensions: { length: 210, width: 90, height: 80 },
+        weightKg: 75,
+        isHeavy: true,
+        isFragile: false,
+        isSpecialty: false,
+        timeMultiplier: 1.2,
+        surcharge: 0
+    },
+    {
+        id: 4,
+        itemCode: 'SOFA_SECTIONAL',
+        category: 'FURNITURE',
+        name: 'Sectional/Modular Lounge',
+        description: 'L-shaped or modular sectional',
+        volumeM3: 3.50,
+        dimensions: { length: 300, width: 200, height: 80 },
+        weightKg: 150,
+        isHeavy: true,
+        isFragile: false,
+        isSpecialty: false,
+        timeMultiplier: 1.4,
+        surcharge: 0
+    },
+    {
+        id: 5,
+        itemCode: 'TABLE_COFFEE',
+        category: 'FURNITURE',
+        name: 'Coffee Table',
+        description: 'Standard living room coffee table',
+        volumeM3: 0.35,
+        dimensions: { length: 120, width: 60, height: 45 },
+        weightKg: 25,
+        isHeavy: false,
+        isFragile: true,
+        isSpecialty: false,
+        timeMultiplier: 1.0,
+        surcharge: 0
+    },
+    {
+        id: 6,
+        itemCode: 'TABLE_TV_UNIT',
+        category: 'FURNITURE',
+        name: 'TV Unit/Entertainment Unit',
+        description: 'Standard TV stand',
+        volumeM3: 0.80,
+        dimensions: { length: 180, width: 45, height: 50 },
+        weightKg: 40,
+        isHeavy: false,
+        isFragile: true,
+        isSpecialty: false,
+        timeMultiplier: 1.0,
+        surcharge: 0
+    },
+    {
+        id: 7,
+        itemCode: 'BOOKSHELF_SMALL',
+        category: 'FURNITURE',
+        name: 'Small Bookshelf (3-4 shelves)',
+        description: 'Standard small bookcase',
+        volumeM3: 0.45,
+        dimensions: { length: 80, width: 30, height: 120 },
+        weightKg: 25,
+        isHeavy: false,
+        isFragile: false,
+        isSpecialty: false,
+        timeMultiplier: 1.0,
+        surcharge: 0
+    },
+    {
+        id: 8,
+        itemCode: 'BOOKSHELF_LARGE',
+        category: 'FURNITURE',
+        name: 'Large Bookshelf (5+ shelves)',
+        description: 'Tall bookcase',
+        volumeM3: 0.90,
+        dimensions: { length: 90, width: 30, height: 200 },
+        weightKg: 50,
+        isHeavy: true,
+        isFragile: false,
+        isSpecialty: false,
+        timeMultiplier: 1.1,
+        surcharge: 0
+    },
+
+    // BEDROOM FURNITURE
+    {
+        id: 20,
+        itemCode: 'BED_SINGLE',
+        category: 'FURNITURE',
+        name: 'Single Bed Frame',
+        description: 'Single bed frame only',
+        volumeM3: 0.75,
+        dimensions: { length: 200, width: 100, height: 50 },
+        weightKg: 40,
+        isHeavy: false,
+        isFragile: false,
+        isSpecialty: false,
+        timeMultiplier: 1.0,
+        surcharge: 0
+    },
+    {
+        id: 21,
+        itemCode: 'BED_QUEEN',
+        category: 'FURNITURE',
+        name: 'Queen Bed Frame',
+        description: 'Queen bed frame',
+        volumeM3: 1.35,
+        dimensions: { length: 210, width: 160, height: 50 },
+        weightKg: 70,
+        isHeavy: true,
+        isFragile: false,
+        isSpecialty: false,
+        timeMultiplier: 1.2,
+        surcharge: 0
+    },
+    {
+        id: 22,
+        itemCode: 'BED_KING',
+        category: 'FURNITURE',
+        name: 'King Bed Frame',
+        description: 'King bed frame',
+        volumeM3: 1.70,
+        dimensions: { length: 210, width: 180, height: 50 },
+        weightKg: 90,
+        isHeavy: true,
+        isFragile: false,
+        isSpecialty: false,
+        timeMultiplier: 1.3,
+        surcharge: 0
+    },
+    {
+        id: 23,
+        itemCode: 'MATTRESS_QUEEN',
+        category: 'FURNITURE',
+        name: 'Queen Mattress',
+        description: 'Queen mattress',
+        volumeM3: 0.70,
+        dimensions: { length: 210, width: 160, height: 20 },
+        weightKg: 30,
+        isHeavy: false,
+        isFragile: false,
+        isSpecialty: false,
+        timeMultiplier: 1.1,
+        surcharge: 0
+    },
+    {
+        id: 24,
+        itemCode: 'MATTRESS_KING',
+        category: 'FURNITURE',
+        name: 'King Mattress',
+        description: 'King mattress',
+        volumeM3: 0.88,
+        dimensions: { length: 210, width: 180, height: 20 },
+        weightKg: 40,
+        isHeavy: false,
+        isFragile: false,
+        isSpecialty: false,
+        timeMultiplier: 1.1,
+        surcharge: 0
+    },
+    {
+        id: 25,
+        itemCode: 'WARDROBE_2DOOR',
+        category: 'FURNITURE',
+        name: '2-Door Wardrobe',
+        description: 'Standard double wardrobe',
+        volumeM3: 1.80,
+        dimensions: { length: 120, width: 60, height: 200 },
+        weightKg: 80,
+        isHeavy: true,
+        isFragile: false,
+        isSpecialty: false,
+        timeMultiplier: 1.2,
+        surcharge: 0
+    },
+    {
+        id: 26,
+        itemCode: 'CHEST_DRAWERS',
+        category: 'FURNITURE',
+        name: 'Chest of Drawers (4-6 drawers)',
+        description: 'Tall boy/tallboy',
+        volumeM3: 0.75,
+        dimensions: { length: 80, width: 45, height: 120 },
+        weightKg: 50,
+        isHeavy: true,
+        isFragile: false,
+        isSpecialty: false,
+        timeMultiplier: 1.1,
+        surcharge: 0
+    },
+    {
+        id: 27,
+        itemCode: 'BEDSIDE_TABLE',
+        category: 'FURNITURE',
+        name: 'Bedside Table',
+        description: 'Nightstand',
+        volumeM3: 0.12,
+        dimensions: { length: 50, width: 40, height: 60 },
+        weightKg: 15,
+        isHeavy: false,
+        isFragile: false,
+        isSpecialty: false,
+        timeMultiplier: 1.0,
+        surcharge: 0
+    },
+
+    // DINING ROOM
+    {
+        id: 40,
+        itemCode: 'TABLE_DINING_6SEAT',
+        category: 'FURNITURE',
+        name: 'Dining Table (6-seater)',
+        description: 'Standard dining table',
+        volumeM3: 1.35,
+        dimensions: { length: 180, width: 100, height: 75 },
+        weightKg: 60,
+        isHeavy: true,
+        isFragile: true,
+        isSpecialty: false,
+        timeMultiplier: 1.2,
+        surcharge: 0
+    },
+    {
+        id: 41,
+        itemCode: 'CHAIR_DINING',
+        category: 'FURNITURE',
+        name: 'Dining Chair',
+        description: 'Single dining chair',
+        volumeM3: 0.18,
+        dimensions: { length: 50, width: 50, height: 95 },
+        weightKg: 8,
+        isHeavy: false,
+        isFragile: true,
+        isSpecialty: false,
+        timeMultiplier: 1.0,
+        surcharge: 0
+    },
+
+    // HOME OFFICE
+    {
+        id: 50,
+        itemCode: 'DESK_LARGE',
+        category: 'FURNITURE',
+        name: 'Large Desk/Executive Desk',
+        description: 'Full-size office desk',
+        volumeM3: 1.00,
+        dimensions: { length: 180, width: 80, height: 75 },
+        weightKg: 60,
+        isHeavy: true,
+        isFragile: false,
+        isSpecialty: false,
+        timeMultiplier: 1.1,
+        surcharge: 0
+    },
+    {
+        id: 51,
+        itemCode: 'OFFICE_CHAIR',
+        category: 'FURNITURE',
+        name: 'Office Chair',
+        description: 'Desk chair with wheels',
+        volumeM3: 0.35,
+        dimensions: { length: 60, width: 60, height: 100 },
+        weightKg: 15,
+        isHeavy: false,
+        isFragile: false,
+        isSpecialty: false,
+        timeMultiplier: 1.0,
+        surcharge: 0
+    },
+
+    // MAJOR APPLIANCES
+    {
+        id: 100,
+        itemCode: 'FRIDGE_MEDIUM',
+        category: 'APPLIANCES',
+        name: 'Medium Fridge (400-550L)',
+        description: 'Standard fridge',
+        volumeM3: 1.20,
+        dimensions: { length: 70, width: 70, height: 170 },
+        weightKg: 80,
+        isHeavy: true,
+        isFragile: false,
+        isSpecialty: false,
+        timeMultiplier: 1.3,
+        surcharge: 0
+    },
+    {
+        id: 101,
+        itemCode: 'FRIDGE_LARGE',
+        category: 'APPLIANCES',
+        name: 'Large Fridge (> 550L)',
+        description: 'Family-size fridge/freezer',
+        volumeM3: 1.80,
+        dimensions: { length: 90, width: 80, height: 180 },
+        weightKg: 120,
+        isHeavy: true,
+        isFragile: false,
+        isSpecialty: false,
+        timeMultiplier: 1.4,
+        surcharge: 50
+    },
+    {
+        id: 102,
+        itemCode: 'WASHING_MACHINE',
+        category: 'APPLIANCES',
+        name: 'Washing Machine',
+        description: 'Front or top loader',
+        volumeM3: 0.70,
+        dimensions: { length: 60, width: 65, height: 85 },
+        weightKg: 70,
+        isHeavy: true,
+        isFragile: false,
+        isSpecialty: false,
+        timeMultiplier: 1.2,
+        surcharge: 0
+    },
+    {
+        id: 103,
+        itemCode: 'DRYER',
+        category: 'APPLIANCES',
+        name: 'Clothes Dryer',
+        description: 'Standard dryer',
+        volumeM3: 0.70,
+        dimensions: { length: 60, width: 65, height: 85 },
+        weightKg: 60,
+        isHeavy: true,
+        isFragile: false,
+        isSpecialty: false,
+        timeMultiplier: 1.2,
+        surcharge: 0
+    },
+    {
+        id: 104,
+        itemCode: 'DISHWASHER',
+        category: 'APPLIANCES',
+        name: 'Dishwasher',
+        description: 'Standard dishwasher',
+        volumeM3: 0.55,
+        dimensions: { length: 60, width: 60, height: 85 },
+        weightKg: 50,
+        isHeavy: true,
+        isFragile: false,
+        isSpecialty: false,
+        timeMultiplier: 1.1,
+        surcharge: 0
+    },
+    {
+        id: 105,
+        itemCode: 'MICROWAVE',
+        category: 'APPLIANCES',
+        name: 'Microwave Oven',
+        description: 'Standard microwave',
+        volumeM3: 0.07,
+        dimensions: { length: 50, width: 40, height: 30 },
+        weightKg: 15,
+        isHeavy: false,
+        isFragile: true,
+        isSpecialty: false,
+        timeMultiplier: 1.0,
+        surcharge: 0
+    },
+
+    // BOXES
+    {
+        id: 200,
+        itemCode: 'BOX_SMALL',
+        category: 'BOXES',
+        name: 'Small Box (Book Box)',
+        description: '35x30x30cm - books, heavy items',
+        volumeM3: 0.0315,
+        dimensions: { length: 35, width: 30, height: 30 },
+        weightKg: 3,
+        isHeavy: false,
+        isFragile: false,
+        isSpecialty: false,
+        timeMultiplier: 1.0,
+        surcharge: 0
+    },
+    {
+        id: 201,
+        itemCode: 'BOX_MEDIUM',
+        category: 'BOXES',
+        name: 'Medium Box',
+        description: '45x40x40cm - general items',
+        volumeM3: 0.0720,
+        dimensions: { length: 45, width: 40, height: 40 },
+        weightKg: 4,
+        isHeavy: false,
+        isFragile: false,
+        isSpecialty: false,
+        timeMultiplier: 1.0,
+        surcharge: 0
+    },
+    {
+        id: 202,
+        itemCode: 'BOX_LARGE',
+        category: 'BOXES',
+        name: 'Large Box',
+        description: '55x45x45cm - light bulky items',
+        volumeM3: 0.1114,
+        dimensions: { length: 55, width: 45, height: 45 },
+        weightKg: 5,
+        isHeavy: false,
+        isFragile: false,
+        isSpecialty: false,
+        timeMultiplier: 1.0,
+        surcharge: 0
+    },
+    {
+        id: 203,
+        itemCode: 'BOX_WARDROBE',
+        category: 'BOXES',
+        name: 'Wardrobe Box (Hanging)',
+        description: 'Portable wardrobe with rail',
+        volumeM3: 0.36,
+        dimensions: { length: 60, width: 50, height: 120 },
+        weightKg: 8,
+        isHeavy: false,
+        isFragile: false,
+        isSpecialty: false,
+        timeMultiplier: 1.1,
+        surcharge: 0
+    },
+
+    // SPECIALTY ITEMS
+    {
+        id: 300,
+        itemCode: 'PIANO_UPRIGHT',
+        category: 'SPECIALTY',
+        name: 'Upright Piano',
+        description: 'Standard upright piano - REQUIRES SPECIALISTS',
+        volumeM3: 2.50,
+        dimensions: { length: 150, width: 60, height: 130 },
+        weightKg: 250,
+        isHeavy: true,
+        isFragile: true,
+        isSpecialty: true,
+        timeMultiplier: 2.5,
+        surcharge: 300
+    },
+    {
+        id: 301,
+        itemCode: 'PIANO_GRAND',
+        category: 'SPECIALTY',
+        name: 'Grand Piano',
+        description: 'Baby grand or concert grand - REQUIRES SPECIALISTS',
+        volumeM3: 5.00,
+        dimensions: { length: 180, width: 150, height: 100 },
+        weightKg: 400,
+        isHeavy: true,
+        isFragile: true,
+        isSpecialty: true,
+        timeMultiplier: 4.0,
+        surcharge: 600
+    },
+    {
+        id: 302,
+        itemCode: 'POOL_TABLE',
+        category: 'SPECIALTY',
+        name: 'Pool/Billiard Table',
+        description: 'Full-size pool table - requires disassembly',
+        volumeM3: 4.50,
+        dimensions: { length: 280, width: 150, height: 80 },
+        weightKg: 400,
+        isHeavy: true,
+        isFragile: true,
+        isSpecialty: true,
+        timeMultiplier: 3.5,
+        surcharge: 400
+    },
+    {
+        id: 303,
+        itemCode: 'SAFE_LARGE',
+        category: 'SPECIALTY',
+        name: 'Large Safe (> 100kg)',
+        description: 'Full-size safe - may require equipment',
+        volumeM3: 0.60,
+        dimensions: { length: 80, width: 70, height: 120 },
+        weightKg: 300,
+        isHeavy: true,
+        isFragile: false,
+        isSpecialty: true,
+        timeMultiplier: 3.0,
+        surcharge: 250
+    },
+    {
+        id: 304,
+        itemCode: 'TRAMPOLINE',
+        category: 'SPECIALTY',
+        name: 'Trampoline',
+        description: 'Large outdoor trampoline - requires disassembly',
+        volumeM3: 2.50,
+        dimensions: { length: 300, width: 300, height: 80 },
+        weightKg: 100,
+        isHeavy: true,
+        isFragile: false,
+        isSpecialty: true,
+        timeMultiplier: 1.8,
+        surcharge: 100
+    },
+    {
+        id: 305,
+        itemCode: 'BBQ_LARGE',
+        category: 'SPECIALTY',
+        name: 'Large BBQ',
+        description: '4+ burner BBQ with cabinet',
+        volumeM3: 1.20,
+        dimensions: { length: 150, width: 60, height: 120 },
+        weightKg: 80,
+        isHeavy: true,
+        isFragile: false,
+        isSpecialty: false,
+        timeMultiplier: 1.2,
+        surcharge: 50
+    }
+];
+
+// Helper function to get items by category
+function getItemsByCategory(category) {
+    if (category === 'all') {
+        return INVENTORY_CATALOG;
+    }
+    return INVENTORY_CATALOG.filter(item => item.category === category);
+}
+
+// Helper function to search items
+function searchItems(query) {
+    const lowerQuery = query.toLowerCase();
+    return INVENTORY_CATALOG.filter(item =>
+        item.name.toLowerCase().includes(lowerQuery) ||
+        item.description.toLowerCase().includes(lowerQuery) ||
+        item.itemCode.toLowerCase().includes(lowerQuery)
+    );
+}
+
+// Export for use in other files
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = {
+        INVENTORY_CATALOG,
+        getItemsByCategory,
+        searchItems
+    };
+}
